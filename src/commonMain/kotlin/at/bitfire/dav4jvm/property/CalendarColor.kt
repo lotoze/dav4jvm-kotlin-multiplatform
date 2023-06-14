@@ -22,7 +22,7 @@ data class CalendarColor(
         @JvmField
         val NAME = QName(XmlUtils.NS_APPLE_ICAL, "calendar-color")
 
-        private val PATTERN = "#?(\\p{XDigit}{6})(\\p{XDigit}{2})?".toRegex()
+        private val PATTERN = "#?([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})?".toRegex()
 
         /**
          * Converts a WebDAV color from one of these formats:

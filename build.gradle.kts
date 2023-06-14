@@ -34,12 +34,7 @@ plugins {
     id("org.jetbrains.dokka") version "1.8.10"
 }
 
-/*publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-        }
-    }
+publishing {
 
     repositories {
         maven {
@@ -47,7 +42,7 @@ plugins {
             url = uri(layout.buildDirectory.dir("repo"))
         }
     }
-}*/
+}
 
 tasks.withType<DokkaTask>().configureEach {
     dokkaSourceSets {
@@ -65,6 +60,10 @@ tasks.withType<DokkaTask>().configureEach {
 
 kotlin {
     jvm()
+    js(IR) {
+        browser()
+        nodejs()
+    }
     linuxX64()
     mingwX64()
 
