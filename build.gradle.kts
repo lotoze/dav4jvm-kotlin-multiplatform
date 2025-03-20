@@ -90,7 +90,11 @@ kotlin {
     }
 
     linuxArm64() {
-
+        binaries {
+            sharedLib {
+                baseName = "yicheng-webdav" // 生成动态库 .so 文件
+            }
+        }
     }
     linuxX64()
 
