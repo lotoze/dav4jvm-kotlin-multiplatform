@@ -1,10 +1,18 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URL
 
+// val resolvableConfiguration = configurations.resolvable("resolvable") {
+//     // 用于新的不打包配置:
+//     // attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
+//
+//     // 用于之前的打包配置:
+//     attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.PACKED))
+// }
+
 object Libs {
 
     // ktor HTTP library
-    const val ktorVersion = "2.3.1"
+    const val ktorVersion = "2.3.13" //由2.3.1升级到2.3.7则linuxArm64平台可以正常编译
 
     // XmlUtil library
     const val xmlVersion = "0.86.0"
@@ -27,7 +35,7 @@ group="com.github.bitfireAT"
 version="2.2-mpp"
 
 plugins {
-    kotlin("multiplatform") version "1.8.21"
+    kotlin("multiplatform") version "1.9.20"
     id("io.kotest.multiplatform") version "5.6.2"
     `maven-publish`
 
@@ -59,19 +67,71 @@ tasks.withType<DokkaTask>().configureEach {
 
 
 kotlin {
+
+
+
+
+
+    // 修复点：统一配置 Native 二进制文件名
+    // targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
+    //     binaries.configureEach {
+    //
+    //         baseName = "dav4jvm-${target.konanTarget.name}-${buildType.name.lowercase()}"
+    //     }
+    // }
+
+
+
+
     jvm()
     js(IR) {
         browser()
         nodejs()
     }
+
+    linuxArm64() {
+
+    }
     linuxX64()
-    mingwX64()
+
+    // 解决去除依赖libgcc_s.so.1
+    // val linuxTargets = listOf(linuxArm64(), linuxX64())
+    // linuxTargets.forEach {
+    //     it.binaries {
+    //         executable {
+    //             this.compilation.compileTaskProvider.configure {
+    //                 this.compilerOptions.freeCompilerArgs.addAll(
+    //                     listOf(
+    //                         "-Xoverride-konan-properties=linkerGccFlags=-lgcc",
+    //                         "-linker-options", "-as-needed",
+    //                     )
+    //                 )
+    //             }
+    //         }
+    //         sharedLib {
+    //             //生成 libkn.so
+    //             baseName = "kn2"
+    //         }
+    //     }
+    // }
+
+    mingwX64() {
+
+    }
 
     sourceSets {
+
+        // val linuxArm64 by getting {
+        //     dependencies {
+        //         implementation("io.ktor:ktor-client-curl:${Libs.ktorVersion}") // 使用与核心库相同的版本
+        //     }
+        // }
+
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib"))
                 api("io.ktor:ktor-client-core:${Libs.ktorVersion}")
+                // api("io.ktor:ktor-client-cio:${Libs.ktorVersion}")
                 api("io.ktor:ktor-client-auth:${Libs.ktorVersion}")
                 implementation("io.github.pdvrieze.xmlutil:core:${Libs.xmlVersion}")
                 implementation("com.soywiz.korlibs.klock:klock:${Libs.klockVersion}")
@@ -96,6 +156,8 @@ kotlin {
                 implementation("ch.qos.logback:logback-classic:${Libs.logbackVersion}")
             }
         }
+
+
     }
 }
 
